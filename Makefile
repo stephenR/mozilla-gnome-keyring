@@ -35,4 +35,4 @@ all: build
 clean:
 	rm -f $(TARGET)
 	rm -f -r xpi
-	rm -f gnome-keyring_password_integration-$(VERSION).xpi
+	rm -f gnome-keyring_password_integration-*.xpi
