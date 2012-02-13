@@ -1,11 +1,11 @@
 Format: http://dep.debian.net/deps/dep5/
-Upstream-Name: firefox-gnome-keyring
-Upstream-Contact: Matt Lavin <matt.lavin@gmail.com>
-Source: https://github.com/mdlavin/firefox-gnome-keyring
+Upstream-Name: mozilla-gnome-keyring
+Upstream-Contact: Ximin Luo <infinity0@gmx.com>
+Source: https://github.com/infinity0/mozilla-gnome-keyring
 
 Files: *
 Copyright: 2007 Sylvain Pasche <sylvain.pasche@gmail.com>
-           2009-2012 firefox-gnome-keyring contributors
+           2009-2012 mozilla-gnome-keyring contributors
 License: MPL-1.1 or GPL-2+ or LGPL-2.1+
 Comment: see upstream AUTHORS file for a full list
 
