@@ -1,5 +1,5 @@
-mozilla-gnome-keyring (0.6-0) UNRELEASED; urgency=low
+mozilla-gnome-keyring (0.6.1-0) UNRELEASED; urgency=low
 
   * Initial release.
 
- -- Ximin Luo <infinity0@gmx.com>  Wed, 28 Dec 2011 12:11:33 +0000
+ -- Ximin Luo <infinity0@gmx.com>  Mon, 13 Feb 2012 23:23:22 +0000
