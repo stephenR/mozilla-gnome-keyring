@@ -9,7 +9,7 @@ Vcs-Git: git://github.com/infinity0/mozilla-gnome-keyring.git
 Vcs-Browser: https://github.com/infinity0/mozilla-gnome-keyring
 
 Package: xul-ext-gnome-keyring
-Architecture: i386 amd64
+Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends}, ${shlibs:Depends}, ${xpi:Depends}
 Recommends: ${xpi:Recommends}
