@@ -18,7 +18,7 @@ XUL_PKG_NAME     = $(shell (pkg-config --atleast-version=2 libxul && echo libxul
 ifdef XUL_PKG_NAME
 XUL_CFLAGS       := `pkg-config --cflags $(XUL_PKG_NAME)`
 XUL_LDFLAGS      := `pkg-config --libs $(XUL_PKG_NAME)`
-XUL_LIBRARY_PATH := `pkg-config --libs-only-L $(XUL_PKG_NAME) | sed -e 's/-L\(\S*\).*/\1/'`
+XPCOM_ABI_FLAGS  += -Wl`pkg-config --libs-only-L $(XUL_PKG_NAME) | sed -e 's/-L\(\S*\).*/,-rpath=\1/'`
 endif
 
 GNOME_CFLAGS     := `pkg-config --cflags gnome-keyring-1`
@@ -30,30 +30,37 @@ XUL_VERSION      = $(shell echo '\#include "mozilla-config.h"'| \
                      $(CXX) $(XUL_CFLAGS) $(CXXFLAGS) -shared -x c++ -w -E -fdirectives-only - | \
                      sed -n -e 's/\#[[:space:]]*define[[:space:]]\+MOZILLA_VERSION[[:space:]]\+\"\(.*\)\"/\1/gp')
 
-# construct Mozilla architectures string
-PLATFORM         ?= $(shell make -s get_abi PLATFORM=unknown || echo unknown)
+# platform-specific handling
+# lazy variables, instantiated properly in a sub-make since make doesn't
+# support dynamically adjusting the dependency tree during its run
+PLATFORM         ?= unknown
 
 TARGET           := libgnomekeyring.so
 XPI_TARGET       := $(FULLNAME).xpi
-
 BUILD_FILES      := \
 xpi/platform/$(PLATFORM)/components/$(TARGET) \
 xpi/install.rdf \
 xpi/chrome.manifest
 
 
-.PHONY: all build build-xpi tarball get_abi
+.PHONY: all build build-xpi tarball
 all: build
 
 build: build-xpi
 
-build-xpi: $(XPI_TARGET)
+build-xpi: xpcom_abi
+ifeq "$(PLATFORM)" "unknown"
+# set PLATFORM properly in a sub-make
+	$(MAKE) $(XPI_TARGET) PLATFORM=`./xpcom_abi || echo unknown`
+else
+	$(MAKE) $(XPI_TARGET)
+endif
 
 $(XPI_TARGET): $(BUILD_FILES)
 	cd xpi && zip -rq ../$@ *
 
-xpi/platform/$(PLATFORM)/components/$(TARGET): $(TARGET)
-	mkdir -p xpi/platform/$(PLATFORM)/components
+xpi/platform/%/components/$(TARGET): $(TARGET)
+	mkdir -p $(@D)
 	cp -a $< $@
 
 xpi/install.rdf: install.rdf Makefile
@@ -77,10 +84,7 @@ $(TARGET): GnomeKeyring.cpp GnomeKeyring.h Makefile
 	chmod +x $@
 
 xpcom_abi: xpcom_abi.cpp Makefile
-	$(CXX) $< -o $@ $(XUL_CFLAGS) $(XUL_LDFLAGS) $(CXXFLAGS)
-
-get_abi: xpcom_abi
-	LD_LIBRARY_PATH=$(XUL_LIBRARY_PATH) ./xpcom_abi
+	$(CXX) $< -o $@ $(XUL_CFLAGS) $(XUL_LDFLAGS) $(XPCOM_ABI_FLAGS) $(CXXFLAGS)
 
 tarball:
 	git archive --format=tar \
