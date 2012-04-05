@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <mozilla-config.h>
 #include "nsIXULRuntime.h"
 #include "nsServiceManagerUtils.h"
 #include "nsStringAPI.h"

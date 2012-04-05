@@ -37,6 +37,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include <mozilla-config.h>
 #include "nsILoginManagerStorage.h"
 extern "C" {
 #include "gnome-keyring.h"

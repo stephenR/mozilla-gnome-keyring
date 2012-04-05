@@ -2,7 +2,7 @@ PACKAGE          ?= mozilla-gnome-keyring
 VERSION          ?= $(shell git describe --tags 2>/dev/null || date +dev-%s)
 # max/min compatibility versions to set, only if "xulrunner" tool is not available
 XUL_VER_MIN      ?= 10.0.1
-XUL_VER_MAX      ?= 10.*
+XUL_VER_MAX      ?= 10.0.3
 # package distribution variables
 FULLNAME         ?= $(PACKAGE)-$(VERSION)
 ARCHIVENAME      ?= $(FULLNAME)
@@ -26,9 +26,10 @@ GNOME_LDFLAGS    := `pkg-config --libs gnome-keyring-1`
 CXXFLAGS         += -Wall -fno-rtti -fno-exceptions -fPIC -std=gnu++0x
 
 # determine xul version from "mozilla-config.h" include file
-XUL_VERSION      = $(shell echo '\#include "mozilla-config.h"'| \
-                     $(CXX) $(XUL_CFLAGS) $(CXXFLAGS) -shared -x c++ -w -E -fdirectives-only - | \
-                     sed -n -e 's/\#[[:space:]]*define[[:space:]]\+MOZILLA_VERSION[[:space:]]\+\"\(.*\)\"/\1/gp')
+XUL_VERSION      = 10.0.1
+#XUL_VERSION      = $(shell echo '\#include "mozilla-config.h"'| \
+#                     $(CXX) $(XUL_CFLAGS) $(CXXFLAGS) -shared -x c++ -w -E -fdirectives-only - | \
+#                     sed -n -e 's/\#[[:space:]]*define[[:space:]]\+MOZILLA_VERSION[[:space:]]\+\"\(.*\)\"/\1/gp')
 
 # platform-specific handling
 # lazy variables, instantiated properly in a sub-make since make doesn't
@@ -84,7 +85,7 @@ $(TARGET): GnomeKeyring.cpp GnomeKeyring.h Makefile
 	chmod +x $@
 
 xpcom_abi: xpcom_abi.cpp Makefile
-	$(CXX) $< -o $@ $(XUL_CFLAGS) $(XUL_LDFLAGS) $(XPCOM_ABI_FLAGS) $(CXXFLAGS)
+	$(CXX) $< -o $@ $(XUL_CFLAGS) $(XUL_LDFLAGS) -lmozalloc $(XPCOM_ABI_FLAGS) $(CXXFLAGS)
 
 tarball:
 	git archive --format=tar \
